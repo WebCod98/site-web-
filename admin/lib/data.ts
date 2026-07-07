@@ -147,12 +147,12 @@ export const orders: AdminOrder[] = [
 ];
 
 export const products: AdminProduct[] = [
-  { id: 'srm-001', slug: 'serum-lumiere-sculptante', name: 'Sérum Lumière Sculptante', category: 'Soin visage', priceXAF: 82000, stock: 34, published: true },
-  { id: 'crm-002', slug: 'creme-architecture-nuit', name: 'Crème Architecture Nuit', category: 'Soin de nuit', priceXAF: 96000, stock: 21, published: true },
-  { id: 'oil-003', slug: 'huile-precieuse-aura', name: 'Huile Précieuse Aura', category: 'Huile visage', priceXAF: 74000, stock: 8, published: true },
-  { id: 'msk-004', slug: 'masque-porcelaine-noire', name: 'Masque Porcelaine Noire', category: 'Rituel hebdomadaire', priceXAF: 58000, stock: 42, published: true },
-  { id: 'prf-005', slug: 'eau-de-parfum-monolithe', name: 'Eau de Parfum Monolithe', category: 'Parfum', priceXAF: 120000, stock: 15, published: true },
-  { id: 'clr-006', slug: 'baume-nettoyant-marbre', name: 'Baume Nettoyant Marbre', category: 'Nettoyage', priceXAF: 49000, stock: 0, published: false },
+  { id: 'gne-001', slug: 'gaine-sculptante-taille', name: 'Gaine Sculptante Taille', category: 'Gainage taille', priceXAF: 18000, stock: 40, published: true },
+  { id: 'gne-002', slug: 'gaine-body-integrale', name: 'Gaine Body Intégrale', category: 'Gainage complet', priceXAF: 25000, stock: 28, published: true },
+  { id: 'gne-003', slug: 'gaine-post-partum', name: 'Gaine Post-Partum', category: 'Après grossesse', priceXAF: 22000, stock: 8, published: true },
+  { id: 'gne-004', slug: 'short-sculptant-cuisses', name: 'Short Sculptant Cuisses', category: 'Gainage cuisses', priceXAF: 15000, stock: 35, published: true },
+  { id: 'min-005', slug: 'huile-minceur-raffermissante', name: 'Huile Minceur Raffermissante', category: 'Soin minceur', priceXAF: 12000, stock: 50, published: true },
+  { id: 'min-006', slug: 'the-minceur-detox', name: 'Thé Minceur Détox', category: 'Rituel minceur', priceXAF: 9000, stock: 0, published: false },
 ];
 
 export const reviews: AdminReview[] = [

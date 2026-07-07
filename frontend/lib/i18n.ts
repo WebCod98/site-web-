@@ -73,6 +73,7 @@ type Dictionary = {
     contact: string;
     stores: string;
     rights: string;
+    follow: string;
   };
 };
 
@@ -80,8 +81,8 @@ export const dictionaries: Record<Locale, Dictionary> = {
   fr: {
     nav: {
       collections: 'Collections',
-      skincare: 'Soins',
-      fragrance: 'Parfums',
+      skincare: 'Minceur',
+      fragrance: 'Gaines',
       journal: 'Journal',
       contact: 'Contact',
       account: 'Compte',
@@ -89,10 +90,10 @@ export const dictionaries: Record<Locale, Dictionary> = {
     announcement:
       'Livraison offerte au Cameroun dès 75 000 XAF — Expédition internationale disponible',
     hero: {
-      eyebrow: 'Maison de cosmétique — Édition Haute Couture',
-      title: "L'art de sculpter la lumière sur la peau",
+      eyebrow: 'Maison de silhouette — Gaines & Minceur',
+      title: 'L’art de sculpter votre silhouette',
       subtitle:
-        'Des formules rares, façonnées à la main, pour révéler une aura sculptée par le soin.',
+        'Gaines d’exception et soins minceur, pensés pour révéler la femme sculptée qui est en vous.',
       cta: 'Découvrir la collection',
       scroll: 'Faire défiler',
     },
@@ -136,7 +137,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
       consent: 'En vous inscrivant, vous acceptez notre politique de confidentialité.',
     },
     footer: {
-      tagline: 'Cosmétique de prestige — Sculptée à la main.',
+      tagline: 'Gaines & minceur — La silhouette sculptée.',
       house: 'La Maison',
       care: 'Service & Soin',
       legal: 'Informations',
@@ -147,13 +148,14 @@ export const dictionaries: Record<Locale, Dictionary> = {
       contact: 'Contact',
       stores: 'Boutiques',
       rights: 'Tous droits réservés.',
+      follow: 'Suivez-nous',
     },
   },
   en: {
     nav: {
       collections: 'Collections',
-      skincare: 'Skincare',
-      fragrance: 'Fragrance',
+      skincare: 'Slimming',
+      fragrance: 'Shapewear',
       journal: 'Journal',
       contact: 'Contact',
       account: 'Account',
@@ -161,10 +163,10 @@ export const dictionaries: Record<Locale, Dictionary> = {
     announcement:
       'Complimentary delivery in Cameroon from 75,000 XAF — International shipping available',
     hero: {
-      eyebrow: 'Cosmetic House — Haute Couture Edition',
-      title: 'The art of sculpting light onto the skin',
+      eyebrow: 'House of Silhouette — Shapewear & Slimming',
+      title: 'The art of sculpting your silhouette',
       subtitle:
-        'Rare, hand-crafted formulas that reveal an aura sculpted by care.',
+        'Exceptional shapewear and slimming care, designed to reveal the sculpted woman within.',
       cta: 'Discover the collection',
       scroll: 'Scroll',
     },
@@ -208,7 +210,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
       consent: 'By subscribing, you agree to our privacy policy.',
     },
     footer: {
-      tagline: 'Prestige cosmetics — Sculpted by hand.',
+      tagline: 'Shapewear & slimming — The sculpted silhouette.',
       house: 'The House',
       care: 'Service & Care',
       legal: 'Information',
@@ -219,6 +221,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
       contact: 'Contact',
       stores: 'Stores',
       rights: 'All rights reserved.',
+      follow: 'Follow us',
     },
   },
 };

@@ -6,6 +6,10 @@ import type { Locale } from './i18n';
  * In production these records come from Supabase (see /supabase/schema.sql).
  * For the storefront scaffold we expose a typed, bilingual mock so the UI can
  * be built and reviewed independently of the database. Prices are integer XAF.
+ *
+ * The house sells shapewear (gaines) and slimming care. The image URLs below are
+ * placeholders — replace them with your own product photography (via the admin
+ * once Supabase is connected, or by editing these URLs).
  */
 
 export type Product = {
@@ -27,85 +31,85 @@ export type Product = {
 
 export const products: Product[] = [
   {
-    id: 'srm-001',
-    slug: 'serum-lumiere-sculptante',
-    name: { fr: 'Sérum Lumière Sculptante', en: 'Sculpting Light Serum' },
-    category: { fr: 'Soin visage', en: 'Face care' },
+    id: 'gne-001',
+    slug: 'gaine-sculptante-taille',
+    name: { fr: 'Gaine Sculptante Taille', en: 'Waist Sculpting Shaper' },
+    category: { fr: 'Gainage taille', en: 'Waist shaping' },
     description: {
-      fr: 'Concentré liftant à l’acide hyaluronique fractionné.',
-      en: 'Lifting concentrate with fractionated hyaluronic acid.',
+      fr: 'Gaine taille haute à double sangle, effet sablier immédiat.',
+      en: 'High-waist double-strap shaper, instant hourglass effect.',
     },
-    priceXAF: 82000,
+    priceXAF: 18000,
     image:
-      'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=1200&q=80',
     tag: { fr: 'Signature', en: 'Signature' },
   },
   {
-    id: 'crm-002',
-    slug: 'creme-architecture-nuit',
-    name: { fr: 'Crème Architecture Nuit', en: 'Night Architecture Cream' },
-    category: { fr: 'Soin de nuit', en: 'Night care' },
+    id: 'gne-002',
+    slug: 'gaine-body-integrale',
+    name: { fr: 'Gaine Body Intégrale', en: 'Full Body Shaper' },
+    category: { fr: 'Gainage complet', en: 'Full-body shaping' },
     description: {
-      fr: 'Régénération nocturne aux peptides et huile de baobab.',
-      en: 'Overnight regeneration with peptides and baobab oil.',
+      fr: 'Body sculptant intégral, maintien ferme du buste aux cuisses.',
+      en: 'Full sculpting bodysuit, firm hold from bust to thighs.',
     },
-    priceXAF: 96000,
+    priceXAF: 25000,
     image:
-      'https://images.unsplash.com/photo-1631730359585-38a4935cbec4?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1594381898411-846e7d193883?auto=format&fit=crop&w=1200&q=80',
   },
   {
-    id: 'oil-003',
-    slug: 'huile-precieuse-aura',
-    name: { fr: 'Huile Précieuse Aura', en: 'Aura Precious Oil' },
-    category: { fr: 'Huile visage', en: 'Face oil' },
+    id: 'gne-003',
+    slug: 'gaine-post-partum',
+    name: { fr: 'Gaine Post-Partum', en: 'Postpartum Shaper' },
+    category: { fr: 'Après grossesse', en: 'Postpartum' },
     description: {
-      fr: 'Élixir sec, fini satiné, actifs botaniques rares.',
-      en: 'Dry elixir, satin finish, rare botanical actives.',
+      fr: 'Ceinture de récupération douce, soutien du ventre après grossesse.',
+      en: 'Gentle recovery belt, tummy support after pregnancy.',
     },
-    priceXAF: 74000,
+    priceXAF: 22000,
+    image:
+      'https://images.unsplash.com/photo-1518310383802-640c2de311b2?auto=format&fit=crop&w=1200&q=80',
+    tag: { fr: 'Confort', en: 'Comfort' },
+  },
+  {
+    id: 'gne-004',
+    slug: 'short-sculptant-cuisses',
+    name: { fr: 'Short Sculptant Cuisses', en: 'Thigh Sculpting Shorts' },
+    category: { fr: 'Gainage cuisses', en: 'Thigh shaping' },
+    description: {
+      fr: 'Short gainant taille haute, affine cuisses et hanches.',
+      en: 'High-waist shaping shorts, refine thighs and hips.',
+    },
+    priceXAF: 15000,
+    image:
+      'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1200&q=80',
+  },
+  {
+    id: 'min-005',
+    slug: 'huile-minceur-raffermissante',
+    name: { fr: 'Huile Minceur Raffermissante', en: 'Firming Slimming Oil' },
+    category: { fr: 'Soin minceur', en: 'Slimming care' },
+    description: {
+      fr: 'Huile aux actifs botaniques, raffermit et tonifie la peau.',
+      en: 'Botanical-active oil, firms and tones the skin.',
+    },
+    priceXAF: 12000,
     image:
       'https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?auto=format&fit=crop&w=1200&q=80',
-    tag: { fr: 'Édition limitée', en: 'Limited edition' },
-  },
-  {
-    id: 'msk-004',
-    slug: 'masque-porcelaine-noire',
-    name: { fr: 'Masque Porcelaine Noire', en: 'Black Porcelain Mask' },
-    category: { fr: 'Rituel hebdomadaire', en: 'Weekly ritual' },
-    description: {
-      fr: 'Charbon activé et argile, éclat instantané.',
-      en: 'Activated charcoal and clay, instant radiance.',
-    },
-    priceXAF: 58000,
-    image:
-      'https://images.unsplash.com/photo-1596755389378-c31d21fd1273?auto=format&fit=crop&w=1200&q=80',
-  },
-  {
-    id: 'prf-005',
-    slug: 'eau-de-parfum-monolithe',
-    name: { fr: 'Eau de Parfum Monolithe', en: 'Monolith Eau de Parfum' },
-    category: { fr: 'Parfum', en: 'Fragrance' },
-    description: {
-      fr: 'Boisé minéral, sillage sculptural et sobre.',
-      en: 'Mineral woods, a sculptural, restrained trail.',
-    },
-    priceXAF: 120000,
-    image:
-      'https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=1200&q=80',
     tag: { fr: 'Nouveauté', en: 'New' },
   },
   {
-    id: 'clr-006',
-    slug: 'baume-nettoyant-marbre',
-    name: { fr: 'Baume Nettoyant Marbre', en: 'Marble Cleansing Balm' },
-    category: { fr: 'Nettoyage', en: 'Cleanse' },
+    id: 'min-006',
+    slug: 'the-minceur-detox',
+    name: { fr: 'Thé Minceur Détox', en: 'Detox Slimming Tea' },
+    category: { fr: 'Rituel minceur', en: 'Slimming ritual' },
     description: {
-      fr: 'Fond en huile soyeuse, démaquille et purifie.',
-      en: 'Melts into a silky oil, removes make-up and purifies.',
+      fr: 'Infusion détox aux plantes, accompagne le rituel silhouette.',
+      en: 'Herbal detox infusion, companion to the silhouette ritual.',
     },
-    priceXAF: 49000,
+    priceXAF: 9000,
     image:
-      'https://images.unsplash.com/photo-1612817288484-6f916006741a?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&w=1200&q=80',
   },
 ];
 

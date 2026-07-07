@@ -7,6 +7,7 @@ import CartDrawer from '@/components/CartDrawer';
 import Announcement from '@/components/Announcement';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import SplashScreen from '@/components/SplashScreen';
 
 /**
  * SCULPT'AURA — root layout.
@@ -80,6 +81,7 @@ export default function RootLayout({
       <body className="bg-white text-neutral-900 antialiased">
         <LocaleProvider>
           <CartProvider>
+            <SplashScreen />
             <Announcement />
             <Header />
             {children}

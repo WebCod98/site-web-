@@ -85,12 +85,12 @@ export default function Header() {
             ))}
           </nav>
 
-          <LanguageToggle className="hidden sm:inline-flex" />
+          <LanguageToggle className="hidden lg:inline-flex" />
 
           <Link
             href="/login"
             aria-label="Account"
-            className="label-editorial hidden text-neutral-900 transition-opacity hover:opacity-60 sm:inline-flex"
+            className="label-editorial hidden text-neutral-900 transition-opacity hover:opacity-60 lg:inline-flex"
           >
             {t.nav.account}
           </Link>
@@ -152,7 +152,7 @@ export default function Header() {
           >
             {t.nav.account}
           </Link>
-          <LanguageToggle className="mt-4 self-start sm:hidden" />
+          <LanguageToggle className="mt-4 self-start lg:hidden" />
         </nav>
       </div>
     </header>
