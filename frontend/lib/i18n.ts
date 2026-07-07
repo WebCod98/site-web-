@@ -21,6 +21,7 @@ type Dictionary = {
     fragrance: string;
     journal: string;
     contact: string;
+    account: string;
   };
   announcement: string;
   hero: {
@@ -83,6 +84,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
       fragrance: 'Parfums',
       journal: 'Journal',
       contact: 'Contact',
+      account: 'Compte',
     },
     announcement:
       'Livraison offerte au Cameroun dès 75 000 XAF — Expédition internationale disponible',
@@ -154,6 +156,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
       fragrance: 'Fragrance',
       journal: 'Journal',
       contact: 'Contact',
+      account: 'Account',
     },
     announcement:
       'Complimentary delivery in Cameroon from 75,000 XAF — International shipping available',

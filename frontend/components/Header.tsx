@@ -87,6 +87,14 @@ export default function Header() {
 
           <LanguageToggle className="hidden sm:inline-flex" />
 
+          <Link
+            href="/login"
+            aria-label="Account"
+            className="label-editorial hidden text-neutral-900 transition-opacity hover:opacity-60 sm:inline-flex"
+          >
+            {t.nav.account}
+          </Link>
+
           <button
             type="button"
             aria-label="Cart"
@@ -137,6 +145,13 @@ export default function Header() {
               {item.label}
             </Link>
           ))}
+          <Link
+            href="/login"
+            onClick={() => setMenuOpen(false)}
+            className="font-serif text-4xl italic text-neutral-900"
+          >
+            {t.nav.account}
+          </Link>
           <LanguageToggle className="mt-4 self-start sm:hidden" />
         </nav>
       </div>
