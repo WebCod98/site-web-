@@ -2,18 +2,22 @@
 
 import ProductCard from './ProductCard';
 import { useLocale } from './LocaleProvider';
-import { getFeaturedProducts } from '@/lib/products';
+import { getFeaturedProducts, type Product } from '@/lib/products';
 
 /**
  * SCULPT'AURA — featured collection grid.
  *
  * A generous three-column grid on desktop with wide gutters, headed by an
- * eyebrow / serif title pair. The "view all" affordance is an underlined label,
- * consistent with the card's restrained interaction language.
+ * eyebrow / serif title pair. Products are supplied by the server page
+ * (Supabase → mock fallback); the prop defaults to the bundled mock so the
+ * component stays safe in isolation.
  */
-export default function ProductGrid() {
+export default function ProductGrid({
+  featured = getFeaturedProducts(6),
+}: {
+  featured?: Product[];
+}) {
   const { t } = useLocale();
-  const featured = getFeaturedProducts(6);
 
   return (
     <section id="collection" className="bg-white py-24 sm:py-32">

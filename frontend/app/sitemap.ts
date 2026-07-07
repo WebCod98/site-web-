@@ -1,15 +1,16 @@
 import type { MetadataRoute } from 'next';
-import { products } from '@/lib/products';
+import { fetchProducts } from '@/lib/catalog';
 
 /**
  * SCULPT'AURA — sitemap.
  *
- * Emits the homepage plus one entry per product. When the catalogue moves to
- * Supabase, this generator reads the live rows instead of the mock array.
+ * Emits the homepage plus one entry per product, read from the catalogue
+ * (Supabase → mock fallback).
  */
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
   const now = new Date();
+  const products = await fetchProducts();
 
   const productEntries: MetadataRoute.Sitemap = products.map((product) => ({
     url: `${siteUrl}/products/${product.slug}`,

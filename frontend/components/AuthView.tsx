@@ -2,7 +2,9 @@
 
 import { useState, type FormEvent } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useLocale } from './LocaleProvider';
+import { getSupabaseBrowser, isSupabaseConfigured } from '@/lib/supabase';
 
 /**
  * SCULPT'AURA — authentication (sign in / register).
@@ -13,7 +15,10 @@ import { useLocale } from './LocaleProvider';
  */
 export default function AuthView({ mode }: { mode: 'login' | 'register' }) {
   const { locale } = useLocale();
+  const router = useRouter();
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const copy = {
     fr: {
@@ -28,6 +33,8 @@ export default function AuthView({ mode }: { mode: 'login' | 'register' }) {
       toLogin: 'Déjà un compte ? Se connecter',
       forgot: 'Mot de passe oublié ?',
       done: 'Vérifiez votre boîte e-mail.',
+      demo: 'Mode démo — connectez Supabase pour activer les comptes réels.',
+      failed: 'Une erreur est survenue. Veuillez réessayer.',
     },
     en: {
       loginTitle: 'Sign in',
@@ -41,15 +48,58 @@ export default function AuthView({ mode }: { mode: 'login' | 'register' }) {
       toLogin: 'Already have an account? Sign in',
       forgot: 'Forgot your password?',
       done: 'Check your inbox.',
+      demo: 'Demo mode — connect Supabase to enable real accounts.',
+      failed: 'Something went wrong. Please try again.',
     },
   }[locale];
 
   const isLogin = mode === 'login';
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // Wired version: call Supabase Auth (signInWithPassword / signUp).
-    setSubmitted(true);
+    setError(null);
+
+    const form = new FormData(event.currentTarget);
+    const email = String(form.get('email') || '').trim();
+    const password = String(form.get('password') || '');
+    const fullName = String(form.get('fullName') || '').trim();
+
+    const supabase = getSupabaseBrowser();
+
+    // Demo mode — no Supabase configured. Acknowledge without a real account.
+    if (!supabase || !isSupabaseConfigured) {
+      setError(copy.demo);
+      setSubmitted(true);
+      return;
+    }
+
+    setLoading(true);
+    try {
+      if (isLogin) {
+        const { error: signInError } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+        if (signInError) throw signInError;
+        // Signed in — return to the storefront.
+        router.push('/');
+        router.refresh();
+        return;
+      }
+
+      const { error: signUpError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: { data: { full_name: fullName, locale } },
+      });
+      if (signUpError) throw signUpError;
+      // Registered — Supabase sends a confirmation email.
+      setSubmitted(true);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : copy.failed);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -89,8 +139,18 @@ export default function AuthView({ mode }: { mode: 'login' | 'register' }) {
               />
             </div>
 
-            <button type="submit" className="btn-editorial w-full">
-              {isLogin ? copy.login : copy.register}
+            {error && (
+              <p className="font-sans text-[0.7rem] leading-relaxed text-neutral-500">
+                {error}
+              </p>
+            )}
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="btn-editorial w-full disabled:opacity-40"
+            >
+              {loading ? '…' : isLogin ? copy.login : copy.register}
             </button>
           </form>
         )}

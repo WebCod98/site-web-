@@ -163,6 +163,10 @@ npm run dev:backend
 > `.env` (backend) and fill in values before running against real services.
 > The storefront, admin and API all boot **without** secrets for local UI work.
 
+> 🧭 **New here? Read [`SETUP.md`](./SETUP.md)** — a step-by-step, non-technical
+> guide to running a demo (no accounts needed) and creating the Supabase,
+> Resend and payment (CinetPay / Mobile Money) accounts to go live.
+
 ### Database
 
 ```bash
@@ -359,14 +363,29 @@ Run from the repo root:
 | Leaflet delivery capture + admin tracking | ✅ Implemented |
 | Verified reviews (paid-buyer gate) | ✅ Schema + UI (RLS + trigger) |
 | Admin PWA (dashboard/orders/products/reviews) | ✅ Implemented + installable |
-| B&W PDF invoices | ✅ Implemented (API route) |
+| B&W PDF invoices | ✅ Implemented (API route + confirmation email) |
 | Rate limiting (Resend quota) | ✅ Implemented |
 | Supabase schema + seed | ✅ Implemented |
-| Live Supabase/Auth/Resend/payment wiring | ⏳ Next increment |
+| **Live wiring** — catalogue, Auth, orders, payment, e-mail | ✅ Implemented with **demo mode** (see [`SETUP.md`](./SETUP.md)) |
+| Payment provider (CinetPay / Mobile Money) | ✅ Implemented (+ demo simulator) |
+| Verified-review submission from the storefront | ⏳ Next increment (display + gate already live) |
 
-Data in the storefront and admin is currently **mock/typed** so the UI can be
-built and reviewed independently of live services; the shapes already match the
-SQL tables, so wiring is a drop-in.
+**Demo mode:** every live integration degrades gracefully when its keys are
+absent — the catalogue falls back to the bundled data, orders are held in
+memory, payment uses a built-in simulator, and e-mails are logged. The full
+purchase flow (browse → cart → checkout → pay → confirmation + invoice) therefore
+works **with zero accounts**. Add the keys from `SETUP.md` to switch each piece
+to the real service, no code changes required.
+
+### Live-wiring map
+
+| Concern | Storefront / API | Real service | Demo fallback |
+| --- | --- | --- | --- |
+| Catalogue | `lib/catalog.ts` | Supabase `products` | Bundled mock |
+| Accounts | `AuthView` | Supabase Auth | "demo mode" notice |
+| Orders | `POST /api/orders` | Supabase `orders` | In-memory store |
+| Payment | `POST /api/payments/init` | CinetPay | Built-in demo checkout |
+| E-mail + invoice | webhook / demo confirm | Resend | Logged |
 
 ---
 

@@ -2,20 +2,24 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import ProductDetail from '@/components/ProductDetail';
 import {
-  getAllProductSlugs,
-  getProductBySlug,
-} from '@/lib/products';
+  fetchAllProductSlugs,
+  fetchProductBySlug,
+} from '@/lib/catalog';
 
 type Params = { params: { slug: string } };
 
+// Revalidate product pages periodically (ISR) when backed by Supabase.
+export const revalidate = 300;
+
 /** Pre-render every product page at build time (SSG/ISR). */
-export function generateStaticParams() {
-  return getAllProductSlugs().map((slug) => ({ slug }));
+export async function generateStaticParams() {
+  const slugs = await fetchAllProductSlugs();
+  return slugs.map((slug) => ({ slug }));
 }
 
 /** Per-product SEO metadata (French default market). */
-export function generateMetadata({ params }: Params): Metadata {
-  const product = getProductBySlug(params.slug);
+export async function generateMetadata({ params }: Params): Promise<Metadata> {
+  const product = await fetchProductBySlug(params.slug);
   if (!product) return { title: 'Introuvable' };
 
   return {
@@ -36,8 +40,8 @@ export function generateMetadata({ params }: Params): Metadata {
  * client ProductDetail, which owns the interactive pieces (gallery, add-to-cart,
  * verified-reviews block). Top padding clears the fixed header.
  */
-export default function ProductPage({ params }: Params) {
-  const product = getProductBySlug(params.slug);
+export default async function ProductPage({ params }: Params) {
+  const product = await fetchProductBySlug(params.slug);
   if (!product) notFound();
 
   return (

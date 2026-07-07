@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import CollectionView from '@/components/CollectionView';
+import { fetchProducts } from '@/lib/catalog';
 
 export const metadata: Metadata = {
   title: 'Collection',
@@ -7,16 +8,21 @@ export const metadata: Metadata = {
     "L'intégralité des soins et parfums SCULPT'AURA — édition Haute Couture, façonnés à la main.",
 };
 
+// Revalidate the catalogue periodically (ISR) when backed by Supabase.
+export const revalidate = 300;
+
 /**
  * SCULPT'AURA — collection listing.
  *
- * A server route wrapping the client CollectionView (which needs the locale and
- * cart contexts). The top padding clears the fixed announcement + header.
+ * Fetches the catalogue server-side (Supabase → mock fallback) and hands it to
+ * the client CollectionView. Top padding clears the fixed announcement + header.
  */
-export default function CollectionPage() {
+export default async function CollectionPage() {
+  const products = await fetchProducts();
+
   return (
     <main className="pt-[136px]">
-      <CollectionView />
+      <CollectionView products={products} />
     </main>
   );
 }

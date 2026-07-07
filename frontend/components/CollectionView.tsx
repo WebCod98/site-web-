@@ -2,15 +2,20 @@
 
 import ProductCard from './ProductCard';
 import { useLocale } from './LocaleProvider';
-import { products } from '@/lib/products';
+import { products as mockProducts, type Product } from '@/lib/products';
 
 /**
  * SCULPT'AURA — full collection grid.
  *
  * The complete catalogue on a bare white ground, headed by an editorial title
- * block. Mirrors the homepage grid's rhythm but without the "featured" limit.
+ * block. Products are supplied by the server page (Supabase → mock fallback);
+ * the prop defaults to the bundled mock so the component is safe in isolation.
  */
-export default function CollectionView() {
+export default function CollectionView({
+  products = mockProducts,
+}: {
+  products?: Product[];
+}) {
   const { locale, t } = useLocale();
 
   const copy = {

@@ -8,6 +8,7 @@ import { useLocale } from './LocaleProvider';
 import { useCart } from './CartProvider';
 import { formatXAF } from '@/lib/currency';
 import { COUNTRIES, quoteShipping } from '@/lib/shipping';
+import { createOrder, initPayment } from '@/lib/api';
 import type { LatLng } from './DeliveryMap';
 
 /**
@@ -40,6 +41,7 @@ export default function CheckoutView() {
   const [country, setCountry] = useState('CM');
   const [coords, setCoords] = useState<LatLng | null>(null);
   const [placed, setPlaced] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const quote = useMemo(
     () => quoteShipping(country, subtotalXAF),
@@ -99,13 +101,43 @@ export default function CheckoutView() {
     },
   }[locale];
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // Wired version: POST the order (lines, coords, country, totals) to the
-    // backend, which persists it and returns a payment redirect. Here we simply
-    // acknowledge and clear the cart.
-    setPlaced(true);
-    clear();
+    if (submitting) return;
+    setSubmitting(true);
+
+    const form = new FormData(event.currentTarget);
+    const customer = {
+      name: String(form.get('fullName') || ''),
+      email: String(form.get('email') || ''),
+      phone: String(form.get('phone') || ''),
+      city: String(form.get('city') || ''),
+      address: String(form.get('address') || ''),
+      country,
+    };
+
+    const items = lines.map((line) => ({
+      productId: line.productId,
+      name: line.name[locale],
+      quantity: line.quantity,
+      unitPriceXAF: line.unitPriceXAF,
+    }));
+
+    try {
+      // Create the order (backend recomputes shipping/totals), then start the
+      // payment and redirect the buyer to the provider (or the demo checkout).
+      const order = await createOrder({ items, customer, countryCode: country, coords });
+      const { redirectUrl } = await initPayment(order.orderId);
+      clear();
+      window.location.href = redirectUrl;
+    } catch {
+      // Backend unreachable (e.g. API not running) — degrade to an optimistic
+      // acknowledgement so the storefront demo still completes.
+      setPlaced(true);
+      clear();
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   if (placed) {
@@ -283,8 +315,12 @@ export default function CheckoutView() {
                 </span>
               </div>
 
-              <button type="submit" className="btn-editorial mt-8 w-full">
-                {copy.place}
+              <button
+                type="submit"
+                disabled={submitting}
+                className="btn-editorial mt-8 w-full disabled:opacity-40"
+              >
+                {submitting ? '…' : copy.place}
               </button>
             </div>
           </aside>

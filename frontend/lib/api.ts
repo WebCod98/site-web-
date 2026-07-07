@@ -50,3 +50,43 @@ export function quoteShippingRemote(countryCode: string, subtotalXAF: number) {
     estimatedDays: [number, number];
   }>('/api/shipping/quote', { countryCode, subtotalXAF });
 }
+
+export type OrderItemInput = {
+  productId?: string;
+  name: string;
+  quantity: number;
+  unitPriceXAF: number;
+};
+
+export type CustomerInput = {
+  name: string;
+  email: string;
+  phone?: string;
+  city?: string;
+  address?: string;
+  country?: string;
+};
+
+/** Create a pending order on the backend (server recomputes totals). */
+export function createOrder(input: {
+  items: OrderItemInput[];
+  customer: CustomerInput;
+  countryCode: string;
+  coords?: { lat: number; lng: number } | null;
+}) {
+  return postJSON<{
+    orderId: string;
+    reference: string;
+    subtotalXAF: number;
+    shippingXAF: number;
+    totalXAF: number;
+  }>('/api/orders', input);
+}
+
+/** Initialise payment for an order; returns the URL to redirect the buyer to. */
+export function initPayment(orderId: string) {
+  return postJSON<{ redirectUrl: string; provider: string }>(
+    '/api/payments/init',
+    { orderId },
+  );
+}

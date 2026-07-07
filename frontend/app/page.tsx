@@ -4,6 +4,10 @@ import ProductGrid from '@/components/ProductGrid';
 import RitualSection from '@/components/RitualSection';
 import Values from '@/components/Values';
 import Newsletter from '@/components/Newsletter';
+import { fetchFeaturedProducts } from '@/lib/catalog';
+
+// Revalidate the homepage catalogue periodically (ISR) when backed by Supabase.
+export const revalidate = 300;
 
 /**
  * SCULPT'AURA — homepage.
@@ -14,12 +18,14 @@ import Newsletter from '@/components/Newsletter';
  * interlude) → house values → newsletter (black close). The full-screen hero
  * sits beneath the transparent header, so no top offset is needed here.
  */
-export default function HomePage() {
+export default async function HomePage() {
+  const featured = await fetchFeaturedProducts(6);
+
   return (
     <main>
       <Hero />
       <Manifesto />
-      <ProductGrid />
+      <ProductGrid featured={featured} />
       <RitualSection />
       <Values />
       <Newsletter />
