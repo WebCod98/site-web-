@@ -1,0 +1,43 @@
+# SCULPT'AURA — Render Blueprint (backend API)
+# -----------------------------------------------------------------------------
+# One-click deploy of the Express API on Render's free tier.
+# In Render: New → Blueprint → connect this repo → it reads this file.
+# Then fill the secret env vars (marked sync:false) in the dashboard.
+#
+# The two Next.js apps (frontend, admin) deploy on Vercel — see DEPLOYMENT.md.
+
+services:
+  - type: web
+    name: sculptaura-api
+    runtime: node
+    rootDir: backend
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      # Payment provider: "demo" (no account) or "cinetpay".
+      - key: PAYMENT_PROVIDER
+        value: demo
+      # Public URLs — set these to your real deployed URLs after the first deploy.
+      - key: PUBLIC_API_URL
+        sync: false
+      - key: FRONTEND_ORIGIN
+        sync: false
+      - key: ADMIN_ORIGIN
+        sync: false
+      # Supabase (leave empty to keep demo/in-memory orders).
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      # Email (leave empty to log instead of send).
+      - key: RESEND_API_KEY
+        sync: false
+      # CinetPay (only if PAYMENT_PROVIDER=cinetpay).
+      - key: CINETPAY_API_KEY
+        sync: false
+      - key: CINETPAY_SITE_ID
+        sync: false

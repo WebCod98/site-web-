@@ -1,0 +1,75 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Installer les dépendances",
+      "detail": "npm install (à faire une seule fois)",
+      "type": "shell",
+      "command": "npm install",
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "sculptaura"
+      }
+    },
+    {
+      "label": "Boutique (frontend)",
+      "detail": "Storefront Next.js — accessible sur le réseau (téléphone) via -H 0.0.0.0",
+      "type": "shell",
+      "command": "npm run dev -- -H 0.0.0.0",
+      "options": { "cwd": "${workspaceFolder}/frontend" },
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "sculptaura"
+      }
+    },
+    {
+      "label": "API (backend)",
+      "detail": "API Express — commandes, paiement, factures",
+      "type": "shell",
+      "command": "npm run dev",
+      "options": { "cwd": "${workspaceFolder}/backend" },
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "sculptaura"
+      }
+    },
+    {
+      "label": "Administration (admin)",
+      "detail": "Console admin PWA — accessible sur le réseau via -H 0.0.0.0",
+      "type": "shell",
+      "command": "npm run dev -- -H 0.0.0.0",
+      "options": { "cwd": "${workspaceFolder}/admin" },
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "sculptaura"
+      }
+    },
+    {
+      "label": "▶ SCULPT'AURA — Lancer tout",
+      "detail": "Démarre la boutique + l'API + l'administration en même temps",
+      "dependsOn": [
+        "Boutique (frontend)",
+        "API (backend)",
+        "Administration (admin)"
+      ],
+      "dependsOrder": "parallel",
+      "problemMatcher": [],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    }
+  ]
+}

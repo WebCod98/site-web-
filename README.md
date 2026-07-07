@@ -391,12 +391,21 @@ to the real service, no code changes required.
 
 ## 16 · Deployment Notes
 
-- **frontend** & **admin** → Vercel (each its own project/origin). Set the
-  `NEXT_PUBLIC_*` env vars per project.
-- **backend** → any Node host (Render, Railway, Fly, a container). Set the
-  server-only secrets; point `FRONTEND_ORIGIN` / `ADMIN_ORIGIN` at the deployed
-  storefront/admin for CORS.
+**📘 Full step-by-step guide: [`DEPLOYMENT.md`](./DEPLOYMENT.md)** — free hosting
+on Vercel (storefront + admin) and Render (API), with a shareable public URL.
+
+- **frontend** & **admin** → Vercel (each its own project; set **Root Directory**
+  to `frontend` / `admin`). `frontend/vercel.json` & `admin/vercel.json` provided.
+- **backend** → Render via the provided `render.yaml` Blueprint (or any Node
+  host). Point `FRONTEND_ORIGIN` / `ADMIN_ORIGIN` at the deployed apps for CORS.
 - **database** → Supabase project; run `schema.sql` then `seed.sql`.
+
+### Run it locally in VS Code
+
+Open the folder in VS Code and run **Terminal → Run Task → “▶ SCULPT'AURA —
+Lancer tout”** (defined in `.vscode/tasks.json`) to start the storefront, API and
+admin together. The storefront/admin bind to `0.0.0.0`, so a phone on the same
+Wi-Fi can open `http://<your-computer-ip>:3000`.
 
 ---
 
