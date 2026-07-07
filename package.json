@@ -1,0 +1,24 @@
+{
+  "name": "sculptaura",
+  "version": "0.1.0",
+  "private": true,
+  "description": "SCULPT'AURA — Prestige B&W editorial e-commerce for high-end cosmetics (Cameroon & International, native currency XAF).",
+  "workspaces": [
+    "frontend",
+    "admin",
+    "backend"
+  ],
+  "scripts": {
+    "dev:frontend": "npm run dev --workspace=frontend",
+    "dev:admin": "npm run dev --workspace=admin",
+    "dev:backend": "npm run dev --workspace=backend",
+    "build:frontend": "npm run build --workspace=frontend",
+    "build:admin": "npm run build --workspace=admin",
+    "build:backend": "npm run build --workspace=backend",
+    "lint": "npm run lint --workspace=frontend"
+  },
+  "engines": {
+    "node": ">=18.17.0"
+  },
+  "license": "UNLICENSED"
+}

@@ -1,0 +1,106 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * SCULPT'AURA — global base layer.
+ * Everything here reinforces the B&W editorial charter. Component-level styling
+ * stays in Tailwind utilities; this file only sets the canvas and a few
+ * reusable editorial primitives that would be verbose to repeat inline.
+ */
+
+@layer base {
+  :root {
+    --font-cormorant: 'Cormorant Garamond', Georgia, serif;
+    --font-jost: 'Jost', system-ui, sans-serif;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    @apply bg-white text-neutral-900 font-sans;
+  }
+
+  /* Thin, refined selection — no loud colour. */
+  ::selection {
+    @apply bg-neutral-900 text-white;
+  }
+
+  /* Custom scrollbar kept monochrome to preserve the charter. */
+  ::-webkit-scrollbar {
+    width: 9px;
+    height: 9px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-white;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-neutral-200;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-neutral-400;
+  }
+}
+
+@layer components {
+  /* An uppercase, wide-tracked label — the charter's signature typographic unit. */
+  .label-editorial {
+    @apply font-sans uppercase tracking-editorial text-[0.7rem] text-neutral-900;
+  }
+
+  .label-editorial-muted {
+    @apply font-sans uppercase tracking-editorial text-[0.7rem] text-neutral-400;
+  }
+
+  /* The only button style tolerated by the charter: a hairline-outlined,
+     wide-tracked capsule that inverts on hover. */
+  .btn-editorial {
+    @apply inline-flex items-center justify-center border border-neutral-900
+           px-10 py-4 font-sans uppercase tracking-editorial text-[0.7rem]
+           text-neutral-900 transition-colors duration-500
+           hover:bg-neutral-900 hover:text-white;
+  }
+
+  .btn-editorial-inverse {
+    @apply inline-flex items-center justify-center border border-white
+           px-10 py-4 font-sans uppercase tracking-editorial text-[0.7rem]
+           text-white transition-colors duration-500
+           hover:bg-white hover:text-neutral-900;
+  }
+
+  /* Charter-compliant form field: no box, just an animated bottom hairline. */
+  .field-editorial {
+    @apply flex flex-col border-b border-neutral-200 pb-2
+           transition-colors duration-500 focus-within:border-neutral-900;
+  }
+
+  .field-editorial input,
+  .field-editorial textarea {
+    @apply w-full bg-transparent font-sans text-sm text-neutral-900
+           placeholder:text-neutral-400 focus:outline-none;
+  }
+
+  /* Section framing used across editorial blocks. */
+  .container-editorial {
+    @apply mx-auto w-full max-w-editorial px-6 sm:px-8 lg:px-12;
+  }
+}
+
+@layer utilities {
+  /* Progressive reveal helper — respects reduced-motion preferences. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
