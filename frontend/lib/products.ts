@@ -113,3 +113,13 @@ export const products: Product[] = [
 export function getFeaturedProducts(limit = 6): Product[] {
   return products.slice(0, limit);
 }
+
+/** Resolve a single product by its slug (used by the detail page). */
+export function getProductBySlug(slug: string): Product | undefined {
+  return products.find((p) => p.slug === slug);
+}
+
+/** All slugs — consumed by generateStaticParams for ISR/SSG. */
+export function getAllProductSlugs(): string[] {
+  return products.map((p) => p.slug);
+}

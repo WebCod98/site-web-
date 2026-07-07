@@ -17,9 +17,23 @@ npm run dev               # http://localhost:4000
 | --- | --- | --- |
 | `GET`  | `/health` | Liveness probe. |
 | `POST` | `/api/shipping/quote` | Dynamic fee by country + subtotal (XAF). |
+| `POST` | `/api/invoices` | Generates a sleek **B&W PDF invoice** (streams `application/pdf`). |
 | `POST` | `/api/newsletter` | Resend double opt-in. **Rate limited.** |
 | `POST` | `/api/contact` | House inbox via Resend. **Rate limited.** |
 | `POST` | `/webhooks/payment` | Raw-body signature verification → order `paid`. |
+
+## Modules
+
+| File | Responsibility |
+| --- | --- |
+| `src/index.js` | Composition root — middleware, limiters, routes. |
+| `src/shipping.js` | Dynamic logistics (national vs. international quote). |
+| `src/invoice.js` | Monochrome A4 PDF invoice generation (PDFKit, no network). |
+| `src/lib/supabase.js` | Lazy **service-role** Supabase client (bypasses RLS). |
+| `src/lib/mailer.js` | Lazy Resend client + `sendEmail` helper. |
+
+Both `lib/*` clients are created lazily and no-op when their env vars are
+absent, so `GET /health`, shipping quotes and invoices work with zero secrets.
 
 ## Security
 

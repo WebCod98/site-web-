@@ -26,7 +26,33 @@ its own origin, and installable as a **Progressive Web App** (mobile & desktop).
 - `manifest.webmanifest` + a service worker enable installation and offline
   shell caching for the dashboard.
 
+## Run
+
+```bash
+cp .env.example .env.local
+npm install          # from the repo root (workspaces)
+npm run dev --workspace=admin   # http://localhost:3001
+```
+
+## Routes
+
+| Path | Purpose |
+| --- | --- |
+| `/` | Dashboard — KPI tiles, recent orders, low-stock watchlist. |
+| `/orders` | Orders table + **Leaflet logistics map** of pending deliveries. |
+| `/products` | Catalogue management (price, stock, publication state). |
+| `/reviews` | Verified-review moderation (publish / hide). |
+| `/login` | Super-admin sign-in (no sidebar, separate route group). |
+
+## PWA
+
+- `public/manifest.webmanifest` — standalone display, black theme, `SA` icons.
+- `public/sw.js` — network-first navigations, cache-first assets, offline shell.
+- `public/icons/` — 192, 512 and maskable-512 PNGs (generated, on-brand).
+- Registered client-side by `components/PwaRegister.tsx` (production only).
+
 ## Status
 
-Workspace reserved and documented. The application is scaffolded in a dedicated
-increment so it can be reviewed independently of the storefront.
+Built and installable. Data is currently mocked in `lib/data.ts`; wiring to
+Supabase (read with an admin session authorised by the `is_admin()` RLS
+predicate) is the next increment.

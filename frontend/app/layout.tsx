@@ -2,6 +2,11 @@ import type { Metadata, Viewport } from 'next';
 import { Cormorant_Garamond, Jost } from 'next/font/google';
 import './globals.css';
 import { LocaleProvider } from '@/components/LocaleProvider';
+import { CartProvider } from '@/components/CartProvider';
+import CartDrawer from '@/components/CartDrawer';
+import Announcement from '@/components/Announcement';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 
 /**
  * SCULPT'AURA — root layout.
@@ -73,7 +78,15 @@ export default function RootLayout({
   return (
     <html lang="fr" className={`${cormorant.variable} ${jost.variable}`}>
       <body className="bg-white text-neutral-900 antialiased">
-        <LocaleProvider>{children}</LocaleProvider>
+        <LocaleProvider>
+          <CartProvider>
+            <Announcement />
+            <Header />
+            {children}
+            <Footer />
+            <CartDrawer />
+          </CartProvider>
+        </LocaleProvider>
       </body>
     </html>
   );

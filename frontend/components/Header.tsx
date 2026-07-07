@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Logo from './Logo';
 import LanguageToggle from './LanguageToggle';
 import { useLocale } from './LocaleProvider';
+import { useCart } from './CartProvider';
 
 /**
  * SCULPT'AURA — storefront header.
@@ -16,6 +17,7 @@ import { useLocale } from './LocaleProvider';
  */
 export default function Header() {
   const { t } = useLocale();
+  const { count, openCart } = useCart();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -35,11 +37,11 @@ export default function Header() {
   }, [menuOpen]);
 
   const nav = [
-    { href: '#collection', label: t.nav.collections },
-    { href: '#ritual', label: t.nav.skincare },
-    { href: '#collection', label: t.nav.fragrance },
-    { href: '#manifesto', label: t.nav.journal },
-    { href: '#newsletter', label: t.nav.contact },
+    { href: '/collection', label: t.nav.collections },
+    { href: '/collection', label: t.nav.skincare },
+    { href: '/collection', label: t.nav.fragrance },
+    { href: '/#manifesto', label: t.nav.journal },
+    { href: '/#newsletter', label: t.nav.contact },
   ];
 
   return (
@@ -88,10 +90,10 @@ export default function Header() {
           <button
             type="button"
             aria-label="Cart"
+            onClick={openCart}
             className="label-editorial text-neutral-900 transition-opacity hover:opacity-60"
           >
-            {/* Cart count is wired to state in a later increment. */}
-            (0)
+            ({count})
           </button>
 
           {/* Mobile menu trigger */}

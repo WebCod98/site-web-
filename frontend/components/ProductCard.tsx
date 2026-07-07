@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useLocale } from './LocaleProvider';
+import { useCart } from './CartProvider';
 import { formatXAF } from '@/lib/currency';
 import type { Product } from '@/lib/products';
 
@@ -16,6 +17,7 @@ import type { Product } from '@/lib/products';
  */
 export default function ProductCard({ product }: { product: Product }) {
   const { locale, t } = useLocale();
+  const { addItem } = useCart();
 
   return (
     <article className="group flex flex-col">
@@ -52,6 +54,7 @@ export default function ProductCard({ product }: { product: Product }) {
           </span>
           <button
             type="button"
+            onClick={() => addItem(product)}
             className="border-b border-transparent pb-1 font-sans text-[0.65rem] uppercase tracking-editorial text-neutral-900 transition-colors duration-300 hover:border-neutral-900"
           >
             {t.collection.addToCart}

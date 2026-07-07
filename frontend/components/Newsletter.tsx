@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from 'react';
 import { useLocale } from './LocaleProvider';
+import { subscribeNewsletter } from '@/lib/api';
 
 /**
  * SCULPT'AURA — newsletter enrolment.
@@ -12,14 +13,22 @@ import { useLocale } from './LocaleProvider';
  * backend route (Resend) in a later increment.
  */
 export default function Newsletter() {
-  const { t } = useLocale();
+  const { locale, t } = useLocale();
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!email.trim()) return;
-    // Placeholder for the rate-limited POST /api/newsletter (Resend) call.
+
+    // Fire the rate-limited backend subscription (Resend double opt-in). The UI
+    // stays optimistic: even if the API is unreachable we acknowledge, since a
+    // newsletter sign-up is low-stakes and the request can be retried.
+    try {
+      await subscribeNewsletter(email.trim(), locale);
+    } catch {
+      // Swallow — optimistic acknowledgement below.
+    }
     setSubmitted(true);
   };
 

@@ -22,6 +22,7 @@ const cors = require('cors');
 const rateLimit = require('express-rate-limit');
 
 const { quoteShipping } = require('./shipping');
+const { generateInvoice } = require('./invoice');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -131,6 +132,48 @@ app.post('/api/shipping/quote', (req, res) => {
   });
 
   return res.json(quote);
+});
+
+/**
+ * Invoice PDF — generates a sleek, monochrome B&W invoice on the fly.
+ *
+ * Body: { reference, date, customer, items[], subtotalXAF, shippingXAF, totalXAF }
+ *
+ * In production the route resolves the order from Supabase (service role) by id
+ * and builds the payload server-side; here it accepts the payload directly so
+ * the generator can be exercised without the database. The response streams the
+ * PDF with a download-friendly Content-Disposition.
+ */
+app.post('/api/invoices', async (req, res, next) => {
+  try {
+    const data = req.body || {};
+
+    if (!data.reference || !Array.isArray(data.items) || data.items.length === 0) {
+      return res.status(400).json({
+        error: 'INVALID_INPUT',
+        message: 'reference and a non-empty items array are required.',
+      });
+    }
+
+    const pdf = await generateInvoice({
+      reference: data.reference,
+      date: data.date || new Date().toISOString().slice(0, 10),
+      customer: data.customer || {},
+      items: data.items,
+      subtotalXAF: Number(data.subtotalXAF) || 0,
+      shippingXAF: Number(data.shippingXAF) || 0,
+      totalXAF: Number(data.totalXAF) || 0,
+    });
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename="facture-${data.reference}.pdf"`,
+    );
+    return res.send(pdf);
+  } catch (err) {
+    return next(err);
+  }
 });
 
 /**
