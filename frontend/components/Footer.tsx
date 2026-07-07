@@ -66,15 +66,28 @@ export default function Footer() {
   const columns = [
     {
       heading: t.footer.house,
-      links: [t.nav.collections, t.nav.skincare, t.nav.fragrance, t.footer.stores],
+      links: [
+        { label: t.nav.collections, href: '/collection' },
+        { label: t.nav.fragrance, href: '/collection' },
+        { label: t.nav.skincare, href: '/collection' },
+        { label: t.footer.stores, href: '/a-propos' },
+      ],
     },
     {
       heading: t.footer.care,
-      links: [t.footer.shipping, t.footer.returns, t.footer.contact, t.nav.journal],
+      links: [
+        { label: 'FAQ', href: '/faq' },
+        { label: t.footer.shipping, href: '/retours' },
+        { label: t.footer.returns, href: '/retours' },
+        { label: t.footer.contact, href: '/contact' },
+      ],
     },
     {
       heading: t.footer.legal,
-      links: [t.footer.privacy, t.footer.terms],
+      links: [
+        { label: t.footer.privacy, href: '/cgv' },
+        { label: t.footer.terms, href: '/cgv' },
+      ],
     },
   ];
 
@@ -117,10 +130,10 @@ export default function Footer() {
                 {col.links.map((link, i) => (
                   <li key={`${col.heading}-${i}`}>
                     <Link
-                      href="#"
+                      href={link.href}
                       className="font-sans text-sm font-light text-neutral-600 transition-colors hover:text-neutral-900"
                     >
-                      {link}
+                      {link.label}
                     </Link>
                   </li>
                 ))}

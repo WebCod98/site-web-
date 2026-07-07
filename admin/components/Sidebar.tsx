@@ -15,6 +15,7 @@ const LINKS = [
   { href: '/orders', label: 'Commandes' },
   { href: '/products', label: 'Produits' },
   { href: '/reviews', label: 'Avis' },
+  { href: '/content', label: 'Contenu' },
 ];
 
 export default function Sidebar() {

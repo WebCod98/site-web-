@@ -390,5 +390,37 @@ create trigger trg_touch_orders before update on public.orders
   for each row execute function public.touch_updated_at();
 
 -- =============================================================================
+-- SITE CONTENT (editable pages: FAQ, About, Terms, Returns)
+-- -----------------------------------------------------------------------------
+-- Each editable page is one row keyed by a stable slug. Content is stored as
+-- bilingual jsonb so the admin can edit FR/EN without code:
+--   - text pages ('about','terms','returns','contact'): { "title", "body" }
+--   - 'faq': { "items": [ { "q", "a" }, ... ] }
+-- Public reads are open; only admins may write (same predicate as products).
+-- The storefront ships sensible defaults in code, so pages render even when a
+-- row is absent (demo mode).
+-- =============================================================================
+create table if not exists public.site_content (
+  key        text primary key,
+  fr         jsonb not null default '{}',
+  en         jsonb not null default '{}',
+  updated_at timestamptz not null default now()
+);
+
+alter table public.site_content enable row level security;
+
+drop policy if exists "site_content_public_read" on public.site_content;
+create policy "site_content_public_read" on public.site_content
+  for select using (true);
+
+drop policy if exists "site_content_admin_write" on public.site_content;
+create policy "site_content_admin_write" on public.site_content
+  for all using (public.is_admin()) with check (public.is_admin());
+
+drop trigger if exists trg_touch_site_content on public.site_content;
+create trigger trg_touch_site_content before update on public.site_content
+  for each row execute function public.touch_updated_at();
+
+-- =============================================================================
 -- End of schema.
 -- =============================================================================

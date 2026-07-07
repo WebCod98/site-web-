@@ -40,8 +40,8 @@ export default function Header() {
     { href: '/collection', label: t.nav.collections },
     { href: '/collection', label: t.nav.skincare },
     { href: '/collection', label: t.nav.fragrance },
-    { href: '/#manifesto', label: t.nav.journal },
-    { href: '/#newsletter', label: t.nav.contact },
+    { href: '/faq', label: 'FAQ' },
+    { href: '/contact', label: t.nav.contact },
   ];
 
   return (
