@@ -17,6 +17,8 @@ export type CatalogProduct = {
   category: Bilingual;
   description: Bilingual;
   price_xaf: number;
+  /** Optional "was" price for a sale (null when not on sale). */
+  compare_at_xaf: number | null;
   image_url: string | null;
   tag: Bilingual | null;
   stock: number;
@@ -27,7 +29,7 @@ export type CatalogProduct = {
 export type ProductInput = Omit<CatalogProduct, 'id'>;
 
 const COLUMNS =
-  'id, slug, name, category, description, price_xaf, image_url, tag, stock, is_published';
+  'id, slug, name, category, description, price_xaf, compare_at_xaf, image_url, tag, stock, is_published';
 
 /** List every product (published or not) — admin view. */
 export async function listProducts(): Promise<CatalogProduct[]> {

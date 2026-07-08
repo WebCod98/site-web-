@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useLocale } from './LocaleProvider';
 import { useCart } from './CartProvider';
-import { formatXAF } from '@/lib/currency';
+import { discountPercent, formatXAF } from '@/lib/currency';
 import type { Product } from '@/lib/products';
 
 /**
@@ -18,6 +18,7 @@ import type { Product } from '@/lib/products';
 export default function ProductCard({ product }: { product: Product }) {
   const { locale, t } = useLocale();
   const { addItem } = useCart();
+  const off = discountPercent(product.priceXAF, product.compareAtXAF);
 
   return (
     <article className="group flex flex-col">
@@ -28,6 +29,11 @@ export default function ProductCard({ product }: { product: Product }) {
         {product.tag && (
           <span className="absolute left-4 top-4 z-10 bg-white/90 px-3 py-1 font-sans text-[0.6rem] uppercase tracking-editorial text-neutral-900">
             {product.tag[locale]}
+          </span>
+        )}
+        {off > 0 && (
+          <span className="absolute right-4 top-4 z-10 bg-neutral-900 px-3 py-1 font-sans text-[0.6rem] uppercase tracking-editorial text-white">
+            &minus;{off}%
           </span>
         )}
         <Image
@@ -49,7 +55,12 @@ export default function ProductCard({ product }: { product: Product }) {
         </p>
 
         <div className="mt-5 flex flex-col items-center gap-3">
-          <span className="font-sans text-sm tracking-wide text-neutral-900">
+          <span className="flex items-center gap-2 font-sans text-sm tracking-wide text-neutral-900">
+            {off > 0 && (
+              <span className="text-neutral-400 line-through">
+                {formatXAF(product.compareAtXAF as number, locale)}
+              </span>
+            )}
             {formatXAF(product.priceXAF, locale)}
           </span>
           <button

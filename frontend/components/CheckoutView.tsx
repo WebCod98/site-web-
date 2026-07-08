@@ -8,7 +8,7 @@ import { useLocale } from './LocaleProvider';
 import { useCart } from './CartProvider';
 import { formatXAF } from '@/lib/currency';
 import { COUNTRIES, quoteShipping } from '@/lib/shipping';
-import { createOrder, initPayment } from '@/lib/api';
+import { createOrder, initPayment, validatePromo } from '@/lib/api';
 import type { LatLng } from './DeliveryMap';
 
 /**
@@ -43,11 +43,18 @@ export default function CheckoutView() {
   const [placed, setPlaced] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
+  // Promo code state.
+  const [promoInput, setPromoInput] = useState('');
+  const [promo, setPromo] = useState<{ code: string; discountXAF: number } | null>(null);
+  const [promoMsg, setPromoMsg] = useState<string | null>(null);
+  const [checkingPromo, setCheckingPromo] = useState(false);
+
   const quote = useMemo(
     () => quoteShipping(country, subtotalXAF),
     [country, subtotalXAF],
   );
-  const totalXAF = subtotalXAF + quote.feeXAF;
+  const discountXAF = promo ? Math.min(subtotalXAF, promo.discountXAF) : 0;
+  const totalXAF = Math.max(0, subtotalXAF - discountXAF) + quote.feeXAF;
 
   const copy = {
     fr: {
@@ -68,6 +75,12 @@ export default function CheckoutView() {
       subtotal: 'Sous-total',
       shipping: 'Livraison',
       free: 'Offerte',
+      discount: 'Remise',
+      promoPlaceholder: 'Code promo',
+      apply: 'Appliquer',
+      remove: 'Retirer',
+      promoApplied: (c: string) => `Code « ${c} » appliqué`,
+      promoInvalid: 'Code invalide ou expiré',
       total: 'Total',
       eta: (a: number, b: number) => `Livraison estimée : ${a}–${b} jours`,
       place: 'Confirmer la commande',
@@ -93,6 +106,12 @@ export default function CheckoutView() {
       subtotal: 'Subtotal',
       shipping: 'Shipping',
       free: 'Free',
+      discount: 'Discount',
+      promoPlaceholder: 'Promo code',
+      apply: 'Apply',
+      remove: 'Remove',
+      promoApplied: (c: string) => `Code "${c}" applied`,
+      promoInvalid: 'Invalid or expired code',
       total: 'Total',
       eta: (a: number, b: number) => `Estimated delivery: ${a}–${b} days`,
       place: 'Place order',
@@ -124,9 +143,15 @@ export default function CheckoutView() {
     }));
 
     try {
-      // Create the order (backend recomputes shipping/totals), then start the
-      // payment and redirect the buyer to the provider (or the demo checkout).
-      const order = await createOrder({ items, customer, countryCode: country, coords });
+      // Create the order (backend recomputes shipping/totals/discount), then
+      // start the payment and redirect to the provider (or the demo checkout).
+      const order = await createOrder({
+        items,
+        customer,
+        countryCode: country,
+        coords,
+        promoCode: promo?.code ?? null,
+      });
       const { redirectUrl } = await initPayment(order.orderId);
       clear();
       window.location.href = redirectUrl;
@@ -138,6 +163,35 @@ export default function CheckoutView() {
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const applyPromo = async () => {
+    const code = promoInput.trim();
+    if (!code) return;
+    setCheckingPromo(true);
+    setPromoMsg(null);
+    try {
+      const result = await validatePromo(code, subtotalXAF);
+      if (result.valid && result.discountXAF > 0) {
+        setPromo({ code: result.code ?? code.toUpperCase(), discountXAF: result.discountXAF });
+        setPromoMsg(copy.promoApplied(result.code ?? code.toUpperCase()));
+      } else {
+        setPromo(null);
+        setPromoMsg(copy.promoInvalid);
+      }
+    } catch {
+      // API unreachable — cannot validate; leave unapplied.
+      setPromo(null);
+      setPromoMsg(copy.promoInvalid);
+    } finally {
+      setCheckingPromo(false);
+    }
+  };
+
+  const removePromo = () => {
+    setPromo(null);
+    setPromoInput('');
+    setPromoMsg(null);
   };
 
   if (placed) {
@@ -293,8 +347,55 @@ export default function CheckoutView() {
                 ))}
               </ul>
 
-              <div className="mt-8 space-y-4 border-t border-neutral-100 pt-6">
+              {/* Promo code */}
+              <div className="mt-8 border-t border-neutral-100 pt-6">
+                {promo ? (
+                  <div className="flex items-center justify-between">
+                    <span className="font-sans text-[0.7rem] uppercase tracking-editorial text-neutral-900">
+                      {promo.code}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={removePromo}
+                      className="font-sans text-[0.6rem] uppercase tracking-editorial text-neutral-400 underline-offset-4 hover:text-neutral-900 hover:underline"
+                    >
+                      {copy.remove}
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex items-end gap-3 border-b border-neutral-200 pb-2 focus-within:border-neutral-900">
+                    <input
+                      type="text"
+                      value={promoInput}
+                      onChange={(e) => setPromoInput(e.target.value)}
+                      placeholder={copy.promoPlaceholder}
+                      className="w-full bg-transparent font-sans text-sm uppercase tracking-editorial text-neutral-900 placeholder:normal-case placeholder:tracking-normal placeholder:text-neutral-400 focus:outline-none"
+                    />
+                    <button
+                      type="button"
+                      onClick={applyPromo}
+                      disabled={checkingPromo}
+                      className="shrink-0 font-sans text-[0.65rem] uppercase tracking-editorial text-neutral-900 transition-opacity hover:opacity-60 disabled:opacity-40"
+                    >
+                      {checkingPromo ? '…' : copy.apply}
+                    </button>
+                  </div>
+                )}
+                {promoMsg && (
+                  <p className="mt-2 font-sans text-[0.65rem] tracking-editorial text-neutral-500">
+                    {promoMsg}
+                  </p>
+                )}
+              </div>
+
+              <div className="mt-6 space-y-4 border-t border-neutral-100 pt-6">
                 <Row label={copy.subtotal} value={formatXAF(subtotalXAF, locale)} />
+                {discountXAF > 0 && (
+                  <Row
+                    label={copy.discount}
+                    value={`− ${formatXAF(discountXAF, locale)}`}
+                  />
+                )}
                 <Row
                   label={copy.shipping}
                   value={

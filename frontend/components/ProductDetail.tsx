@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useLocale } from './LocaleProvider';
 import { useCart } from './CartProvider';
 import StarRating from './StarRating';
-import { formatXAF } from '@/lib/currency';
+import { discountPercent, formatXAF } from '@/lib/currency';
 import type { Product } from '@/lib/products';
 import { getAverageRating, getReviewsForProduct } from '@/lib/reviews';
 
@@ -107,9 +107,21 @@ export default function ProductDetail({ product }: { product: Product }) {
               {product.description[locale]}
             </p>
 
-            <p className="mt-10 font-serif text-3xl italic text-neutral-900">
-              {formatXAF(product.priceXAF, locale)}
-            </p>
+            <div className="mt-10 flex items-baseline gap-4">
+              <p className="font-serif text-3xl italic text-neutral-900">
+                {formatXAF(product.priceXAF, locale)}
+              </p>
+              {discountPercent(product.priceXAF, product.compareAtXAF) > 0 && (
+                <>
+                  <span className="font-sans text-lg text-neutral-400 line-through">
+                    {formatXAF(product.compareAtXAF as number, locale)}
+                  </span>
+                  <span className="bg-neutral-900 px-3 py-1 font-sans text-[0.6rem] uppercase tracking-editorial text-white">
+                    &minus;{discountPercent(product.priceXAF, product.compareAtXAF)}%
+                  </span>
+                </>
+              )}
+            </div>
 
             {/* Quantity + add */}
             <div className="mt-10 flex flex-col gap-6 sm:flex-row sm:items-end">

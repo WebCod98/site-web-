@@ -67,18 +67,32 @@ export type CustomerInput = {
   country?: string;
 };
 
+/** Validate a promo code against a subtotal (checkout preview). */
+export function validatePromo(code: string, subtotalXAF: number) {
+  return postJSON<{
+    valid: boolean;
+    discountXAF: number;
+    code?: string;
+    label?: string | null;
+    reason?: string;
+  }>('/api/promo/validate', { code, subtotalXAF });
+}
+
 /** Create a pending order on the backend (server recomputes totals). */
 export function createOrder(input: {
   items: OrderItemInput[];
   customer: CustomerInput;
   countryCode: string;
   coords?: { lat: number; lng: number } | null;
+  promoCode?: string | null;
 }) {
   return postJSON<{
     orderId: string;
     reference: string;
     subtotalXAF: number;
     shippingXAF: number;
+    discountXAF: number;
+    promoCode: string | null;
     totalXAF: number;
   }>('/api/orders', input);
 }

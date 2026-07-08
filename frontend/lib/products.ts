@@ -21,8 +21,13 @@ export type Product = {
   category: Record<Locale, string>;
   /** Longer one-line description used on cards / detail. */
   description: Record<Locale, string>;
-  /** Price in the native currency, XAF, as an integer. */
+  /** Current price in the native currency, XAF, as an integer. */
   priceXAF: number;
+  /**
+   * Optional "was" price. When set and higher than priceXAF, the product is on
+   * sale: the UI strikes it through and shows the discount badge.
+   */
+  compareAtXAF?: number;
   /** Remote image URL (monochrome-friendly editorial photography). */
   image: string;
   /** Flag surfaced as a discreet editorial tag. */
@@ -40,6 +45,7 @@ export const products: Product[] = [
       en: 'High-waist double-strap shaper, instant hourglass effect.',
     },
     priceXAF: 18000,
+    compareAtXAF: 22000,
     image:
       'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=1200&q=80',
     tag: { fr: 'Signature', en: 'Signature' },
@@ -108,6 +114,7 @@ export const products: Product[] = [
       en: 'Herbal detox infusion, companion to the silhouette ritual.',
     },
     priceXAF: 9000,
+    compareAtXAF: 12000,
     image:
       'https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&w=1200&q=80',
   },

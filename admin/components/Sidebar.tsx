@@ -14,6 +14,7 @@ const LINKS = [
   { href: '/', label: 'Tableau de bord' },
   { href: '/orders', label: 'Commandes' },
   { href: '/products', label: 'Produits' },
+  { href: '/promotions', label: 'Promotions' },
   { href: '/reviews', label: 'Avis' },
   { href: '/content', label: 'Contenu' },
 ];

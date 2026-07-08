@@ -24,6 +24,7 @@ const rateLimit = require('express-rate-limit');
 const { quoteShipping } = require('./shipping');
 const { generateInvoice } = require('./invoice');
 const { createOrder, getOrder, markOrderPaid } = require('./orders');
+const { validatePromo } = require('./promo');
 const { getPaymentProvider } = require('./payments');
 const { sendOrderConfirmation } = require('./email');
 const { getSupabaseAdmin } = require('./lib/supabase');
@@ -238,8 +239,28 @@ app.post('/api/orders', async (req, res, next) => {
       reference: order.reference,
       subtotalXAF: order.subtotalXAF,
       shippingXAF: order.shippingXAF,
+      discountXAF: order.discountXAF,
+      promoCode: order.promoCode,
       totalXAF: order.totalXAF,
     });
+  } catch (err) {
+    return next(err);
+  }
+});
+
+/**
+ * Validate a promo code against a subtotal. Public + light, used by the
+ * checkout to preview the discount before placing the order.
+ * Body: { code, subtotalXAF } → { valid, discountXAF, code?, label?, reason? }
+ */
+app.post('/api/promo/validate', async (req, res, next) => {
+  try {
+    const { code, subtotalXAF } = req.body || {};
+    if (!code || typeof code !== 'string') {
+      return res.status(400).json({ valid: false, discountXAF: 0, reason: 'missing_code' });
+    }
+    const result = await validatePromo(code, Number(subtotalXAF) || 0);
+    return res.json(result);
   } catch (err) {
     return next(err);
   }

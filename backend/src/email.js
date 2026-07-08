@@ -17,6 +17,8 @@ function toInvoiceData(order) {
   // Support both the in-memory shape (camelCase) and Supabase rows (snake_case).
   const subtotalXAF = order.subtotalXAF ?? order.subtotal_xaf ?? 0;
   const shippingXAF = order.shippingXAF ?? order.shipping_xaf ?? 0;
+  const discountXAF = order.discountXAF ?? order.discount_xaf ?? 0;
+  const promoCode = order.promoCode ?? order.promo_code ?? null;
   const totalXAF = order.totalXAF ?? order.total_xaf ?? 0;
   const reference = order.reference ?? String(order.id).slice(0, 8).toUpperCase();
 
@@ -37,6 +39,8 @@ function toInvoiceData(order) {
     })),
     subtotalXAF,
     shippingXAF,
+    discountXAF,
+    promoCode,
     totalXAF,
   };
 }

@@ -17,3 +17,15 @@ export function formatXAF(amount: number, locale: Locale = 'fr'): string {
 
   return `${formatted} XAF`;
 }
+
+/**
+ * Discount percentage between a compare-at ("was") price and the current price.
+ * Returns 0 when there is no valid sale. E.g. 22000 → 18000 gives 18 (%).
+ */
+export function discountPercent(
+  priceXAF: number,
+  compareAtXAF?: number | null,
+): number {
+  if (!compareAtXAF || compareAtXAF <= priceXAF) return 0;
+  return Math.round((1 - priceXAF / compareAtXAF) * 100);
+}

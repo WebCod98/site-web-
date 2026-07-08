@@ -216,6 +216,12 @@ function generateInvoice(data) {
     };
 
     totalRow('Sous-total', formatXAF(data.subtotalXAF));
+    if (data.discountXAF > 0) {
+      totalRow(
+        `Remise${data.promoCode ? ` (${data.promoCode})` : ''}`,
+        `- ${formatXAF(data.discountXAF)}`,
+      );
+    }
     totalRow(
       'Livraison',
       data.shippingXAF === 0 ? 'Offerte' : formatXAF(data.shippingXAF),

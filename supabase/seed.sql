@@ -86,6 +86,18 @@ on conflict (slug) do update set
   stock        = excluded.stock,
   is_published = excluded.is_published;
 
+-- Mark a couple of products as on sale (compare-at "was" price > current price).
+update public.products set compare_at_xaf = 22000 where slug = 'gaine-sculptante-taille';
+update public.products set compare_at_xaf = 12000 where slug = 'the-minceur-detox';
+
+-- Seed a few promo codes (idempotent on the unique code).
+insert into public.promo_codes (code, kind, value, label, commission_percent, max_uses)
+values
+  ('BIENVENUE10', 'percent', 10, 'Nouveaux clients', null, null),
+  ('AWA15',       'percent', 15, 'Influenceuse — Awa', 10, 200),
+  ('PROMO5000',   'fixed',  5000, 'Offre lancement',   null, 100)
+on conflict (code) do nothing;
+
 -- =============================================================================
 -- End of seed.
 -- =============================================================================

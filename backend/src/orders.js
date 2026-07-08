@@ -14,6 +14,7 @@
 
 const { getSupabaseAdmin } = require('./lib/supabase');
 const { quoteShipping } = require('./shipping');
+const { validatePromo, recordUsage } = require('./promo');
 
 // Fallback store used when Supabase is not configured (demo mode).
 /** @type {Map<string, object>} */
@@ -56,7 +57,20 @@ async function createOrder(input) {
     subtotalXAF,
   });
   const shippingXAF = quote.feeXAF;
-  const totalXAF = subtotalXAF + shippingXAF;
+
+  // Apply a promo code if provided (server-side authoritative). Discount is on
+  // the subtotal; the total never drops below the shipping fee.
+  let discountXAF = 0;
+  let appliedCode = null;
+  if (input.promoCode) {
+    const result = await validatePromo(input.promoCode, subtotalXAF);
+    if (result.valid) {
+      discountXAF = result.discountXAF;
+      appliedCode = result.code;
+    }
+  }
+
+  const totalXAF = Math.max(0, subtotalXAF - discountXAF) + shippingXAF;
 
   const order = {
     id: randomId(),
@@ -70,10 +84,17 @@ async function createOrder(input) {
     deliveryLng: input.coords?.lng ?? null,
     subtotalXAF,
     shippingXAF,
+    discountXAF,
+    promoCode: appliedCode,
     totalXAF,
     createdAt: new Date().toISOString(),
     paidAt: null,
   };
+
+  // Count the promo use (best-effort).
+  if (appliedCode) {
+    await recordUsage(appliedCode, totalXAF).catch(() => {});
+  }
 
   const supabase = getSupabaseAdmin();
   if (!supabase) {
@@ -89,6 +110,8 @@ async function createOrder(input) {
       status: 'pending',
       subtotal_xaf: subtotalXAF,
       shipping_xaf: shippingXAF,
+      discount_xaf: discountXAF,
+      promo_code: appliedCode,
       total_xaf: totalXAF,
       shipping_scope: quote.scope,
       country_code: order.countryCode,

@@ -22,6 +22,7 @@ type ProductRow = {
   category: Record<'fr' | 'en', string>;
   description: Record<'fr' | 'en', string>;
   price_xaf: number;
+  compare_at_xaf: number | null;
   image_url: string | null;
   tag: Record<'fr' | 'en', string> | null;
 };
@@ -34,6 +35,7 @@ function mapRow(row: ProductRow): Product {
     category: row.category,
     description: row.description,
     priceXAF: row.price_xaf,
+    compareAtXAF: row.compare_at_xaf ?? undefined,
     image: row.image_url ?? '',
     tag: row.tag ?? undefined,
   };
@@ -46,7 +48,7 @@ export async function fetchProducts(): Promise<Product[]> {
 
   const { data, error } = await supabase
     .from('products')
-    .select('id, slug, name, category, description, price_xaf, image_url, tag')
+    .select('id, slug, name, category, description, price_xaf, compare_at_xaf, image_url, tag')
     .eq('is_published', true)
     .order('created_at', { ascending: true });
 
@@ -72,7 +74,7 @@ export async function fetchProductBySlug(
 
   const { data, error } = await supabase
     .from('products')
-    .select('id, slug, name, category, description, price_xaf, image_url, tag')
+    .select('id, slug, name, category, description, price_xaf, compare_at_xaf, image_url, tag')
     .eq('slug', slug)
     .eq('is_published', true)
     .maybeSingle();

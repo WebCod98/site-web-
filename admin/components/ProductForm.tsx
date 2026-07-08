@@ -49,6 +49,9 @@ export default function ProductForm({
         en: String(f.get('descriptionEn') || '').trim(),
       },
       price_xaf: Number(f.get('priceXaf') || 0),
+      compare_at_xaf: f.get('compareAtXaf')
+        ? Number(f.get('compareAtXaf'))
+        : null,
       stock: Number(f.get('stock') || 0),
       image_url: String(f.get('imageUrl') || '').trim() || null,
       tag:
@@ -108,6 +111,18 @@ export default function ProductForm({
             <Field label="Prix (XAF)" name="priceXaf" type="number" defaultValue={product?.price_xaf?.toString()} required />
             <Field label="Stock" name="stock" type="number" defaultValue={product?.stock?.toString() ?? '0'} />
           </div>
+
+          <Field
+            label="Prix barré / promo (XAF) — laisser vide si pas de promo"
+            name="compareAtXaf"
+            type="number"
+            defaultValue={product?.compare_at_xaf?.toString() ?? ''}
+            placeholder="ex. 22000"
+          />
+          <p className="-mt-4 font-sans text-[0.7rem] leading-relaxed text-neutral-400">
+            Renseignez l’ancien prix (plus élevé que le prix actuel) pour afficher
+            une promotion : prix barré + badge de réduction sur la boutique.
+          </p>
 
           <Field label="URL de l'image" name="imageUrl" defaultValue={product?.image_url ?? ''} placeholder="https://…" />
           <Field label="Slug (laisser vide = auto)" name="slug" defaultValue={product?.slug} placeholder="ex. serum-lumiere" />
