@@ -7,6 +7,7 @@ import {
   DEFAULTS,
   getEntry,
   saveEntry,
+  type BannerContent,
   type ContentKey,
   type FaqContent,
   type TextPage,
@@ -30,12 +31,14 @@ const TEXT_KEYS: { key: ContentKey; label: string }[] = [
 
 type TextEntry = { fr: TextPage; en: TextPage };
 type FaqEntry = { fr: FaqContent; en: FaqContent };
+type BannerEntry = { fr: BannerContent; en: BannerContent };
 
 export default function ContentView() {
   const configured = isSupabaseConfigured;
   const [ready, setReady] = useState(false);
   const [authed, setAuthed] = useState(false);
-  const [tab, setTab] = useState<ContentKey>('about');
+  const [tab, setTab] = useState<ContentKey>('announcement');
+  const [banner, setBanner] = useState<BannerEntry>(DEFAULTS.announcement);
 
   const [texts, setTexts] = useState<Record<string, TextEntry>>({
     about: DEFAULTS.about,
@@ -48,13 +51,15 @@ export default function ContentView() {
   const [saving, setSaving] = useState(false);
 
   const loadAll = useCallback(async () => {
-    const [about, terms, returns, contact, faqData] = await Promise.all([
+    const [ann, about, terms, returns, contact, faqData] = await Promise.all([
+      getEntry('announcement'),
       getEntry('about'),
       getEntry('terms'),
       getEntry('returns'),
       getEntry('contact'),
       getEntry('faq'),
     ]);
+    setBanner(ann);
     setTexts({ about, terms, returns, contact });
     setFaq(faqData);
   }, []);
@@ -82,7 +87,9 @@ export default function ContentView() {
     setMessage(null);
     setSaving(true);
     try {
-      if (tab === 'faq') {
+      if (tab === 'announcement') {
+        await saveEntry('announcement', banner.fr, banner.en);
+      } else if (tab === 'faq') {
         await saveEntry('faq', faq.fr, faq.en);
       } else {
         await saveEntry(tab, texts[tab].fr, texts[tab].en);
@@ -141,7 +148,11 @@ export default function ContentView() {
 
       {/* Tabs */}
       <div className="mb-8 flex flex-wrap gap-2">
-        {[...TEXT_KEYS, { key: 'faq' as ContentKey, label: 'FAQ' }].map((t) => (
+        {[
+          { key: 'announcement' as ContentKey, label: 'Bannière' },
+          ...TEXT_KEYS,
+          { key: 'faq' as ContentKey, label: 'FAQ' },
+        ].map((t) => (
           <button
             key={t.key}
             type="button"
@@ -158,7 +169,9 @@ export default function ContentView() {
       </div>
 
       {/* Editor */}
-      {tab === 'faq' ? (
+      {tab === 'announcement' ? (
+        <BannerEditor banner={banner} setBanner={setBanner} />
+      ) : tab === 'faq' ? (
         <FaqEditor faq={faq} setFaq={setFaq} />
       ) : (
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-2">
@@ -207,6 +220,92 @@ function Header() {
         Éditeur de contenu
       </h1>
     </header>
+  );
+}
+
+/** Banner editor: the scrolling promo message (FR/EN) + a show/hide switch. */
+function BannerEditor({
+  banner,
+  setBanner,
+}: {
+  banner: BannerEntry;
+  setBanner: React.Dispatch<React.SetStateAction<BannerEntry>>;
+}) {
+  // `enabled` is global; keep it in sync across both locales.
+  const enabled = banner.fr.enabled;
+
+  const setEnabled = (value: boolean) => {
+    setBanner((prev) => ({
+      fr: { ...prev.fr, enabled: value },
+      en: { ...prev.en, enabled: value },
+    }));
+  };
+
+  const setMessage = (loc: 'fr' | 'en', value: string) => {
+    setBanner((prev) => ({ ...prev, [loc]: { ...prev[loc], message: value } }));
+  };
+
+  return (
+    <div className="space-y-8">
+      {/* Show / hide switch */}
+      <div className="card-editorial flex items-center justify-between">
+        <div>
+          <p className="label-editorial">Afficher la bannière</p>
+          <p className="mt-2 font-sans text-sm font-light text-neutral-500">
+            Éteignez-la lorsqu’il n’y a plus de promotion en cours.
+          </p>
+        </div>
+        <button
+          type="button"
+          role="switch"
+          aria-checked={enabled}
+          onClick={() => setEnabled(!enabled)}
+          className={`relative h-7 w-12 rounded-full border transition-colors ${
+            enabled ? 'border-neutral-900 bg-neutral-900' : 'border-neutral-300 bg-white'
+          }`}
+        >
+          <span
+            className={`absolute top-0.5 h-5 w-5 rounded-full transition-transform ${
+              enabled ? 'translate-x-[22px] bg-white' : 'translate-x-0.5 bg-neutral-400'
+            }`}
+          />
+        </button>
+      </div>
+
+      {/* Message per locale */}
+      <div className="grid grid-cols-1 gap-10 lg:grid-cols-2">
+        {(['fr', 'en'] as const).map((loc) => (
+          <div key={loc} className="card-editorial space-y-6">
+            <p className="label-editorial">{loc === 'fr' ? 'Français' : 'English'}</p>
+            <div className="flex flex-col border-b border-neutral-200 pb-2 focus-within:border-neutral-900">
+              <label className="label-editorial-muted mb-2">Message</label>
+              <textarea
+                rows={3}
+                value={banner[loc].message}
+                onChange={(e) => setMessage(loc, e.target.value)}
+                className="w-full resize-y bg-transparent font-sans text-sm leading-relaxed text-neutral-900 focus:outline-none"
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Live preview of the band */}
+      <div>
+        <p className="label-editorial-muted mb-3">Aperçu</p>
+        {enabled && banner.fr.message.trim() ? (
+          <div className="flex h-8 items-center overflow-hidden bg-neutral-900 px-6 text-white">
+            <span className="font-sans text-[0.6rem] uppercase tracking-editorial-wide">
+              {banner.fr.message}
+            </span>
+          </div>
+        ) : (
+          <p className="font-serif text-lg italic text-neutral-300">
+            Bannière masquée.
+          </p>
+        )}
+      </div>
+    </div>
   );
 }
 

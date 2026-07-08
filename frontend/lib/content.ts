@@ -13,14 +13,34 @@ import { getSupabaseServer } from './supabase';
 export type TextPage = { title: string; body: string };
 export type FaqItem = { q: string; a: string };
 export type FaqContent = { title: string; items: FaqItem[] };
+/** The scrolling top banner: a message + an on/off switch. */
+export type BannerContent = { message: string; enabled: boolean };
 
-export type ContentKey = 'about' | 'terms' | 'returns' | 'contact' | 'faq';
+export type ContentKey =
+  | 'about'
+  | 'terms'
+  | 'returns'
+  | 'contact'
+  | 'faq'
+  | 'announcement';
 
 /** { fr, en } pair for a given key. */
 export type BilingualContent<T> = { fr: T; en: T };
 
 /** Default content shipped in code — the fallback when no DB row exists. */
 export const DEFAULT_CONTENT = {
+  announcement: {
+    fr: {
+      message:
+        'Livraison offerte au Cameroun dès 75 000 XAF — Expédition internationale disponible',
+      enabled: true,
+    },
+    en: {
+      message:
+        'Complimentary delivery in Cameroon from 75,000 XAF — International shipping available',
+      enabled: true,
+    },
+  },
   about: {
     fr: {
       title: 'La Maison',
@@ -84,6 +104,7 @@ export const DEFAULT_CONTENT = {
     },
   },
 } satisfies {
+  announcement: BilingualContent<BannerContent>;
   about: BilingualContent<TextPage>;
   terms: BilingualContent<TextPage>;
   returns: BilingualContent<TextPage>;

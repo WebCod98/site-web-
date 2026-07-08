@@ -1,18 +1,32 @@
 'use client';
 
 import { useLocale } from './LocaleProvider';
+import type { BannerContent, BilingualContent } from '@/lib/content';
 
 /**
  * SCULPT'AURA — top announcement marquee.
  *
- * A slim black band carrying the shipping promise, scrolling infinitely. The
- * content is duplicated once so the marquee keyframe (translateX -50%) loops
- * seamlessly. Sits above the fixed header, so the layout offsets accordingly.
+ * A slim black band carrying the promo message, scrolling infinitely. Content
+ * and visibility are managed from the admin (site_content 'announcement'): the
+ * `content` prop carries the bilingual message + an on/off switch. When disabled
+ * the band renders nothing (no promo running).
+ *
+ * The content is duplicated once so the marquee keyframe (translateX -50%) loops
+ * seamlessly. When shown it sits above the fixed header, matching the layout's
+ * offset.
  */
-export default function Announcement() {
-  const { t } = useLocale();
+export default function Announcement({
+  content,
+}: {
+  content: BilingualContent<BannerContent>;
+}) {
+  const { locale } = useLocale();
+  const banner = content[locale];
 
-  const items = Array.from({ length: 6 }, () => t.announcement);
+  // Hidden by the admin (no active promo) — render nothing.
+  if (!banner?.enabled || !banner.message?.trim()) return null;
+
+  const items = Array.from({ length: 6 }, () => banner.message);
 
   return (
     <div className="fixed inset-x-0 top-0 z-[60] flex h-8 items-center overflow-hidden bg-neutral-900 text-white">

@@ -8,6 +8,7 @@ import Announcement from '@/components/Announcement';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import SplashScreen from '@/components/SplashScreen';
+import { fetchContent } from '@/lib/content';
 
 /**
  * SCULPT'AURA — root layout.
@@ -71,18 +72,21 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  // Banner message + on/off are managed from the admin (site_content).
+  const banner = await fetchContent('announcement');
+
   return (
     <html lang="fr" className={`${cormorant.variable} ${jost.variable}`}>
       <body className="bg-white text-neutral-900 antialiased">
         <LocaleProvider>
           <CartProvider>
             <SplashScreen />
-            <Announcement />
+            <Announcement content={banner} />
             <Header />
             {children}
             <Footer />

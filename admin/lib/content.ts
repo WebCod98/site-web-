@@ -12,12 +12,23 @@ import { getSupabaseBrowser } from './supabase';
 export type TextPage = { title: string; body: string };
 export type FaqItem = { q: string; a: string };
 export type FaqContent = { title: string; items: FaqItem[] };
-export type ContentKey = 'about' | 'terms' | 'returns' | 'contact' | 'faq';
+export type BannerContent = { message: string; enabled: boolean };
+export type ContentKey =
+  | 'about'
+  | 'terms'
+  | 'returns'
+  | 'contact'
+  | 'faq'
+  | 'announcement';
 
 export type Entry<T> = { fr: T; en: T };
 
 /** Default content — kept in sync with frontend/lib/content.ts. */
 export const DEFAULTS = {
+  announcement: {
+    fr: { message: 'Livraison offerte au Cameroun dès 75 000 XAF — Expédition internationale disponible', enabled: true },
+    en: { message: 'Complimentary delivery in Cameroon from 75,000 XAF — International shipping available', enabled: true },
+  },
   about: {
     fr: { title: 'La Maison', body: "SCULPT'AURA est une maison dédiée à la silhouette féminine. Nous concevons des gaines d'exception et des soins minceur pensés pour révéler chaque femme.\n\nNée au Cameroun, notre maison marie exigence, élégance et confort." },
     en: { title: 'The House', body: "SCULPT'AURA is a house devoted to the feminine silhouette. We craft exceptional shapewear and slimming care designed to reveal every woman.\n\nBorn in Cameroon, our house blends exactingness, elegance and comfort." },
@@ -53,6 +64,7 @@ export const DEFAULTS = {
     },
   },
 } satisfies {
+  announcement: Entry<BannerContent>;
   about: Entry<TextPage>;
   terms: Entry<TextPage>;
   returns: Entry<TextPage>;
