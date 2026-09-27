@@ -39,20 +39,22 @@ export default function Logo({
     >
       {withFigure && (
         <svg
-          viewBox="0 0 90 120"
+          viewBox="0 0 120 180"
           className={figureClassName}
           fill="none"
           stroke="currentColor"
-          strokeWidth="1.4"
+          strokeWidth="2.2"
           strokeLinecap="round"
           strokeLinejoin="round"
           aria-hidden="true"
         >
-          {/* Single-line seated silhouette — head, arched back, hip, and arm. */}
-          <path d="M46 10c5 0 8 4 8 9 0 4-2 7-6 8 3 2 5 5 5 9" />
-          <path d="M53 36c-6 2-11 7-13 14-2 8-1 16 2 24 2 6 5 12 5 19 0 7-3 13-9 17" />
-          <path d="M42 52c-7 3-12 9-14 17-1 6 0 12 3 17" />
-          <path d="M40 78c8 1 15 5 19 12" />
+          {/* Single-line feminine silhouette (front, one arm raised) — head,
+              bust, waist and hips. Pure stroke: adapts to any background. */}
+          <circle cx="60" cy="22" r="7.5" />
+          <path d="M52 44 C 46 29 53 13 67 15 C 79 17 82 31 72 37" />
+          <path d="M60 31 C 72 43 74 61 66 73 C 59 83 61 97 71 108 C 82 120 79 143 66 164" />
+          <path d="M55 35 C 46 49 48 67 57 79 C 65 89 62 105 52 117 C 45 126 47 147 42 164" />
+          <path d="M55 61 C 46 65 46 77 56 80" />
         </svg>
       )}
       <span className="font-serif text-2xl italic tracking-[0.08em]">
